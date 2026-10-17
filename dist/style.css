@@ -52,15 +52,24 @@
 
 .hero-note{display:block;margin-top:24px;font-size:12px;letter-spacing:.1px;color:var(--muted)}.join>div:first-child{max-width:720px}
 
-/* Warm ivory, stone and charcoal complement the monochrome portrait. */
-body{background:#fcfbf8;color:var(--ink)}
-.hero{background:#f2f0eb}.hero h1 em{color:#776e61}
-.hero-note,.hero p,.section-head p{color:#696e69}
-.cat,.provider,.searchbar,.chip,.outline{background:#fffefa}
-.cat-icon{background:#eeece5;color:#535b56}
-.popular button{background:#eeece6;color:#555e57}
-.join{background:#eae6de;color:var(--ink);border:1px solid #ded9d0}
-.join p,.join .eyebrow{color:#656960}
-.join .lime{background:var(--ink);color:#fff}.join .lime:hover{background:#45494a}
-.launch-note{background:#f0eee8;border-color:#dfddd5}
-.btn{box-shadow:none}.stars{color:#766c5f}
+/* High-contrast portrait-led hero with restrained warm accents. */
+:root{--ink:#202b34;--muted:#68727a;--cream:#f7f5f1;--lime:#e7c7a7;--line:#e5e8e9}
+body{background:#fff;color:var(--ink)}
+.hero{background:#171d22;color:#faf6ef;grid-template-columns:1fr 1fr;border-radius:18px;min-height:580px}
+.hero-copy{position:relative;z-index:1;padding:54px 22px 44px 44px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center}
+.hero h1{font-size:52px;line-height:1.08;letter-spacing:-2.6px;margin:25px 0 22px;color:#faf6ef}
+.hero h1 em{color:#e0c3a8}.hero .eyebrow{color:#d4b99f}.hero .eyebrow>span{background:#d4b99f}
+.hero-copy>p{color:#c5cacf;font-size:14px;line-height:1.8;max-width:360px}.hero-copy>p br{display:none}
+.hero .hero-btn{background:#f1e4d5;color:#20282e;box-shadow:none;margin-top:16px;padding:17px 22px}.hero .hero-btn:hover{background:#fff3e4}
+.hero .hero-note{color:#a7afb5;font-size:11px;margin-top:24px}
+.hero-art{margin:0;border-radius:0;min-height:580px;background:#171d22}
+.hero-art>img{object-position:center 36%}
+.hero-art .image-shade{background:linear-gradient(90deg,#171d22 0%,rgba(23,29,34,.35) 15%,transparent 38%),linear-gradient(180deg,rgba(23,29,34,.08) 45%,rgba(23,29,34,.9) 100%)}
+.hero-art .art-bottom{left:38px;right:24px;bottom:36px;background:transparent}
+.hero-art .art-bottom h2{font-size:27px;letter-spacing:-.7px;color:#faf6ef}.hero-art .art-bottom p{color:#c5cacf;font-size:11px}
+.cat,.provider,.searchbar,.chip,.outline{background:#fff}.cat-icon{background:#f4eee7;color:#6f6458}
+.cat:hover,.cat.selected{border-color:#b29377;background:#faf7f2}.popular button{background:#f5f1eb;color:#67645e}
+.join{background:#202b34;color:#fff;border:0}.join p,.join .eyebrow{color:#d3d7d9}.join .lime{background:#e7c7a7;color:#202b34}
+.launch-note{background:#f7f5f1;border-color:#e4ded5}.dot{color:#b29377}
+@media(max-width:1000px) and (min-width:681px){.hero h1{font-size:43px}.hero-copy{padding-left:30px}.hero-art .art-bottom{left:28px}}
+@media(max-width:680px){.hero{grid-template-columns:1fr}.hero-copy{padding:34px 25px 18px}.hero h1{font-size:42px;letter-spacing:-2px}.hero .hero-btn{width:100%}.hero-art{height:490px;min-height:0;margin:0}.hero-art>img{object-position:center 36%}.hero-art .image-shade{background:linear-gradient(180deg,#171d22 0%,rgba(23,29,34,.2) 16%,transparent 32%,transparent 55%,rgba(23,29,34,.92) 100%)}.hero-art .art-bottom{left:25px;bottom:28px}.hero-art .art-bottom h2{font-size:27px}}
