@@ -1,77 +1,77 @@
 # Fyield — Abuja services marketplace
 
-Capability deserves visibility.
+Capability deserves visibility. Fyield connects Abuja service providers and customers.
 
-An Abuja-only, responsive marketplace **launch preview** for nannies, cleaning,
-mechanics, hair and beauty, and skilled trades. Uses the supplied original Fyield
-logo with navy, terracotta, and warm white for the broader services identity.
+## Implemented
 
-## Current release
+- Account registration/sign-in, seven-day server sessions, password changes and sign-out using Better Auth.
+- Provider-owned profiles with Abuja neighborhood, service category, experience, starting price, service tags and description.
+- Up to six captioned portfolio photos per profile; signed-in uploads, server-side decode/resize/re-encode, metadata stripping and bounded image size.
+- Public photo gallery, real customer review totals and averages, no fabricated ratings.
+- One review per account/provider. Providers cannot review themselves. Review authors can remove their own reviews.
+- Private customer enquiries and provider replies; participants only. Inbox is in My account.
+- Provider profile editing/removal and an uploaded-photo library for removing unused photos.
+- Sample profiles are clearly labeled. They cannot receive enquiries or reviews.
 
-- Search by skill, provider name, and Abuja neighborhood.
-- Filter Maitama, Gwarinpa, Wuse, Garki, and Jabi.
-- Explore clearly marked illustrative provider profiles and portfolios.
-- Save sample profile IDs locally; remove them from Privacy & your data.
-- Provider onboarding and contact screens describe availability without collecting personal data.
-- Images are served locally. No third-party scripts, fonts, analytics, or trackers.
+## Stack
 
-**This release does not register providers, verify identities, send messages,
-accept bookings, process payments, or collect personal details.** Sample prices
-are illustrative. Sample people and work must be replaced before operating the
-marketplace. Do not portray samples as verified or real providers.
+Buildless HTML/CSS/JS in `dist/`; Express 5 on a Vercel Node function at `api/index.js`.
+Better Auth uses Neon Postgres via the serverless WebSocket driver. Images use Vercel Blob.
+The Vercel project is `fyield-services` in FYIELD (`fyield1`). Source is private on GitHub.
+GitHub-to-Vercel automatic deployment still requires granting the Vercel GitHub app repository access.
 
-## Local preview
-
-Requires Python 3, and Node.js for checks. No packages or build step required.
+## Development
 
 ```sh
-python3 -m http.server 4173 --directory dist
-node --test tests/security.test.mjs
+npm ci
+# Pull development environment variables through the authenticated Vercel CLI.
+# Set a strong BETTER_AUTH_SECRET and BETTER_AUTH_URL=http://localhost:4174 locally.
+npm run migrate
+npm run dev
+npm test
+# Against a running server (creates and removes explicitly named QA records):
+TEST_BASE_URL=http://localhost:4174 node --env-file=.env.local scripts/test-integration.mjs
 ```
 
-## GitHub and Vercel
+The initial Marketplace resource connects the same database to production and development.
+Use isolated database branches/environments before further schema development with real users.
+Never reset the database or run destructive migrations against production.
 
-Use a private GitHub repository until the desired source visibility is agreed.
-Commit the project directory; `.openai/`, credentials, and `.vercel/` are ignored.
+Required runtime variables: `DATABASE_URL`, `BETTER_AUTH_SECRET` (32+ random characters),
+`BETTER_AUTH_URL`, `BLOB_READ_WRITE_TOKEN`. Keep all secrets server-side, excluded from Git,
+deployment uploads, and distributable archives. The server uses a five-connection pool.
 
-Import the repository in the authorized Vercel team. Select the **Other** framework
-preset, leave build/install commands empty, and use `dist` as the output directory.
-The root `vercel.json` declares output configuration and security headers.
+## Permissions and data handling
 
-After deployment verify search, neighborhood filters, saved favorites, dialogs,
-mobile layouts, and HTTP security headers. A deployment cannot be reported as
-complete until Vercel confirms readiness and a working URL is returned.
+- Every write verifies its origin, session, ownership and input bounds server-side.
+- Database-backed auth rate limits and atomic per-account mutation counters persist across functions.
+- Profile photos must belong to the current account before publication.
+- Images are public; upload consent explicitly says so. Do not upload sensitive documents or child photos.
+- Private emails never appear in public provider/review endpoints. Public display names do.
+- Enquiries are visible only to customer and provider; these are not confirmed bookings.
+- CSP permits local scripts/API calls and the Blob image host. No advertising or analytics scripts.
+- Removing a provider profile cascades its reviews and enquiries. Account/photos remain until separately removed.
 
-## Before accepting personal details
+## Known launch limitations
 
-Implement and review these features as a separate backend release:
+Reviews are self-reported by signed-in account holders; bookings, identity, qualifications,
+and email ownership are not independently verified. No verification badge is shown.
+Email notifications and email-based password recovery are not configured. Users can change
+passwords while signed in. Account deletion is not self-service. Booking/payment processing,
+moderation tooling, review appeals and account-recovery support need a further release.
+A production privacy/legal review and operational support process remain necessary before broad rollout.
+This is a functional early release, not a security certification.
 
-1. Authenticated customer/provider accounts with verified email, session expiry,
-   secure cookies, rate limiting, and authorization checks on every server route.
-2. Database policies separating public service profiles from private contact,
-   enquiry, address, and booking records. Customers and providers must only access
-   records they own or are explicit participants in. Staff access requires roles.
-3. Server-side validation, input limits, abuse reporting, moderation, blocking,
-   and request throttling. Never treat client validation as authorization.
-4. Private file storage with upload type/size checks, malware handling, metadata
-   stripping, short-lived access links, and permission to show customer work.
-   Child photos and home addresses must not become public portfolio content.
-5. Consent-based, purpose-limited data collection, retention/deletion workflows,
-   an accurate privacy notice, and an operational support contact. Obtain an
-   appropriate local privacy/legal review before launch.
-6. Tests for cross-account access, account recovery, injection, upload abuse,
-   data deletion, logging redaction, and restoring backups. Security review and
-   monitoring must cover the deployed backend, not only the frontend.
+## Verification
 
-A Content Security Policy is defense in depth, not proof that an application is
-safe to collect personal data. The current static preview intentionally has no
-server submission endpoints and uses `connect-src 'none'` and `form-action 'none'`.
-These policies need deliberate revision when the backend is implemented.
+Unit tests cover profile/review input bounds, HTML escaping, CSP and accidental frontend secrets.
+The integration script checks signup/session, required authentication, origin rejection, image
+processing and ownership, persisted profiles/gallery, review aggregation, duplicate/self-review
+rejection, protected review deletion, private enquiries and provider-only replies. It removes
+its exact temporary users, linked records and uploaded test image in a finally block.
 
-## Asset provenance
+## Assets
 
-`dist/assets/fyield-logo.jpeg` is the logo supplied by the project owner.
-The other JPGs are illustrative Unsplash images retained from the initial design;
-their filenames preserve the source image IDs. Replace with permissioned provider
-portfolios for launch. No testimonial, rating, verification claim, or completed-job
-count is inferred from these images.
+The original Fyield logo was supplied by the owner. Existing example photos are illustrative
+Unsplash images, identified by their filenames. They are never represented as actual portfolio
+evidence for example providers. Real provider photos are uploaded with publication consent.
