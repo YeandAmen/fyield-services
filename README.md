@@ -75,3 +75,9 @@ its exact temporary users, linked records and uploaded test image in a finally b
 The original Fyield logo was supplied by the owner. Existing example photos are illustrative
 Unsplash images, identified by their filenames. They are never represented as actual portfolio
 evidence for example providers. Real provider photos are uploaded with publication consent.
+
+## Email OTP and administrator access
+
+The OTP implementation is staged behind `EMAIL_OTP_ENABLED=true`. Set `RESEND_API_KEY` (sensitive) and `EMAIL_FROM` to a verified Resend sender in Vercel production, then activate and redeploy. Until all three are configured, existing email/password sign-in remains available. OTP uses six digits, expires in five minutes, allows three attempts, stores hashed codes, and rate-limits requests. Once enabled, email OTP replaces password sign-in and account creation; existing users retain their accounts and can use their inbox to sign in. Actual delivery remains unverified until a sending domain/provider is configured.
+
+Set `ADMIN_EMAILS` server-side to a comma-separated allowlist. Admin access additionally requires a verified account email. Never mark an email verified merely to bypass the OTP requirement. After verified sign-in, open **My account → Admin dashboard**. The read-only dashboard shows paginated accounts, provider details, customer reviews, and enquiry totals; it excludes private message content and authentication secrets. There is no public administrator signup or client-controlled role. Account deletion performed for the owner’s test account was an explicit maintenance action, not an administrator UI feature.

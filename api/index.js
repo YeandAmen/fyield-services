@@ -4,6 +4,7 @@ import { toNodeHandler, fromNodeHeaders } from 'better-auth/node';
 import sharp from 'sharp';
 import { put, del } from '@vercel/blob';
 import {getAuth,pool} from '../lib/auth.js';
+import {isAdmin,otpEnabled} from '../lib/access.js';
 import {InputError,profileInput,reviewInput,text} from '../lib/validation.js';
 const app=express();app.disable('x-powered-by');
 app.use((req,res,next)=>{res.set('Cache-Control','no-store');next();});
@@ -31,7 +32,7 @@ async function publicProfile(row,viewer){
  const stats=(await pool.query('SELECT count(*)::int AS count, round(avg(rating),1)::float AS average FROM customer_reviews WHERE profile_id=$1',[row.id])).rows[0];
  return {...row.details,id:row.id,photos:row.details.photos.map(p=>({...p,url:photos.find(i=>i.id===p.id)?.url})).filter(p=>p.url),isOwn:viewer===row.user_id,reviewCount:stats.count,rating:stats.average,createdAt:row.created_at};
 }
-app.get('/api/session',(req,res)=>res.json({user:req.session?{id:req.session.user.id,name:req.session.user.name,email:req.session.user.email}:null}));
+app.get('/api/session',(req,res)=>res.json({user:req.session?{id:req.session.user.id,name:req.session.user.name,email:req.session.user.email,isAdmin:isAdmin(req.session.user)}:null,otpEnabled:otpEnabled()}));
 app.get('/api/providers',async(req,res)=>{const r=await pool.query('SELECT * FROM provider_profiles ORDER BY updated_at DESC LIMIT 100');res.json({profiles:await Promise.all(r.rows.map(p=>publicProfile(p,req.session?.user.id)))});});
 app.get('/api/providers/:id',async(req,res)=>{const r=await pool.query('SELECT * FROM provider_profiles WHERE id=$1',[uuid(req.params.id)]);if(!r.rowCount)throw new InputError('Profile not found.',404);res.json({profile:await publicProfile(r.rows[0],req.session?.user.id)});});
 app.get('/api/my-profile',async(req,res)=>{const id=signed(req),r=await pool.query('SELECT * FROM provider_profiles WHERE user_id=$1',[id]);res.json({profile:r.rowCount?await publicProfile(r.rows[0],id):null});});
@@ -79,6 +80,17 @@ app.get('/api/enquiries',async(req,res)=>{
 app.post('/api/enquiries/:id/reply',async(req,res)=>{
  const user=signed(req),reply=text(req.body.reply,'Reply',10,1500);await limit('reply:'+user,30);
  const r=await pool.query('UPDATE service_enquiries e SET reply=$1,replied_at=now() FROM provider_profiles p WHERE e.id=$2 AND e.profile_id=p.id AND p.user_id=$3 RETURNING e.id',[reply,uuid(req.params.id),user]);if(!r.rowCount)throw new InputError('Enquiry not found.',404);res.json({ok:true});
+});
+app.get('/api/admin/overview',async(req,res)=>{
+ signed(req);if(!isAdmin(req.session.user))throw new InputError('Verified administrator access is required.',403);
+ const page=Math.max(0,Math.min(10000,Number.parseInt(req.query.page,10)||0)),offset=page*25;
+ const [counts,users,providers,reviews]=await Promise.all([
+  pool.query(`SELECT (SELECT count(*)::int FROM "user") AS accounts,(SELECT count(*)::int FROM provider_profiles) AS providers,(SELECT count(*)::int FROM customer_reviews) AS reviews,(SELECT count(*)::int FROM service_enquiries) AS enquiries`),
+  pool.query('SELECT id,name,email,"emailVerified" AS verified,"createdAt" AS joined FROM "user" ORDER BY "createdAt" DESC LIMIT 25 OFFSET $1',[offset]),
+  pool.query(`SELECT p.id,p.details->>'name' AS name,p.details->>'category' AS category,p.details->>'area' AS area,p.created_at AS joined,u.email FROM provider_profiles p JOIN "user" u ON p.user_id=u.id ORDER BY p.created_at DESC LIMIT 25 OFFSET $1`,[offset]),
+  pool.query(`SELECT r.id,r.rating,r.comment,r.created_at AS posted,u.name AS customer,p.details->>'name' AS provider FROM customer_reviews r JOIN "user" u ON r.user_id=u.id JOIN provider_profiles p ON r.profile_id=p.id ORDER BY r.created_at DESC LIMIT 25 OFFSET $1`,[offset])
+ ]);
+ res.json({counts:counts.rows[0],users:users.rows,providers:providers.rows,reviews:reviews.rows,page});
 });
 app.use('/api',(req,res)=>res.status(404).json({error:'Not found.'}));
 app.use((err,req,res,next)=>{const status=err.status||500;if(status===500)console.error('Marketplace request failed',err.code||err.name);res.status(status).json({error:status===500?'Something went wrong. Your changes were not confirmed. Please try again.':err.message});});
