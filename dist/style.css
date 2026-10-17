@@ -30,3 +30,6 @@
  .searchbar input,.searchbar select{font-size:16px}.plain{min-height:44px}.chip{min-height:40px}
  .profile-price{flex-wrap:wrap;gap:16px}.profile-price .btn{min-height:44px}
 }
+
+.hero-art>img{object-position:center 24%}.hero-art .image-shade{background:linear-gradient(180deg,#202c4826,transparent 35%,#101b30dc)}
+@media(max-width:680px){.hero-art{height:360px}.hero-art>img{object-position:center 20%}}
