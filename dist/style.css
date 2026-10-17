@@ -33,3 +33,5 @@
 
 .hero-art>img{object-position:center 24%}.hero-art .image-shade{background:linear-gradient(180deg,#202c4826,transparent 35%,#101b30dc)}
 @media(max-width:680px){.hero-art{height:360px}.hero-art>img{object-position:center 20%}}
+
+.hero-art .float-tag{display:none}.hero-art>img{object-position:center 20%}.hero-art .image-shade{background:linear-gradient(180deg,#202c4838 0%,transparent 25%,transparent 45%,#101b30e6 100%)}.hero-art .art-bottom{left:28px;right:24px;bottom:25px}.hero-art .art-bottom h2{font-size:32px}.hero-art .art-bottom p{max-width:290px;line-height:1.6}@media(max-width:680px){.hero-art{height:400px}.hero-art .art-bottom{left:22px;bottom:22px}.hero-art .art-bottom h2{font-size:28px}.hero-art .art-top{left:22px;right:22px;font-size:8px}}
