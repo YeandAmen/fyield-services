@@ -4,7 +4,7 @@ async function api(path,options={}){const r=await fetch('/api'+path,{credentials
 function feedback(message){const e=$('#formError');if(e){e.textContent=message;e.hidden=false;e.scrollIntoView({block:'nearest'})}else toast(message)}
 function busy(button,value,label){button.disabled=value;button.textContent=value?'Please wait…':label;}
 function imageSrc(p){return p.photos?.[0]?.url|| (p.image?photo(p.image):'assets/fyield-logo.jpeg');}
-async function refreshMarket(){const d=await api('/providers');drafts=d.profiles;liveReady=true;render();$('#marketStatus').textContent=drafts.length?'Community profiles are live. Examples are marked.':'Be among the first providers in Abuja. Example profiles are marked.';}
+async function refreshMarket(){const d=await api('/providers');drafts=d.profiles;liveReady=true;render();renderWork();$('#marketStatus').textContent=drafts.length?'Discover independent service providers across Abuja.':'Now welcoming service providers across Abuja.';}
 async function session(){const d=await api('/session');currentUser=d.user;$('#accountBtn').textContent=currentUser?'My account':'Sign in';}
 function showAccount(mode='signin',after){
  if(currentUser&&!after){accountHome();return}
@@ -44,3 +44,5 @@ $('#accountBtn').onclick=()=>showAccount();
 Promise.all([session(),refreshMarket()]).catch(()=>{$('#marketStatus').textContent='Community profiles could not be loaded. Please refresh to retry.'});
 
 async function photoLibrary(){try{const d=await api('/my-photos');openModal(`<div class="eyebrow">YOUR UPLOADS</div><h2>Photo library</h2><p>Photos in a published profile must be removed from that profile and saved before you can delete them here.</p><div class="photo-library">${d.photos.length?d.photos.map(p=>`<article><img src="${esc(p.url)}" alt="Your uploaded work"><button class="text-link" data-delete-photo="${p.id}">Delete unused photo</button></article>`).join(''):'<p>No uploaded photos yet.</p>'}</div>`);document.querySelectorAll('[data-delete-photo]').forEach(b=>b.onclick=async()=>{try{await api('/photos/'+b.dataset.deletePhoto,{method:'DELETE',body:{}});photoLibrary();toast('Photo deleted.')}catch(e){toast(e.message)}})}catch(e){toast(e.message)}}
+
+function renderWork(){const work=drafts.flatMap(p=>(p.photos||[]).map(photo=>({...photo,provider:p}))).slice(0,6);$('#work').hidden=!work.length;$('#workGrid').innerHTML=work.map(w=>`<button class="work-card" data-work="${esc(w.provider.id)}"><div class="work-photo"><img src="${esc(w.url)}" alt="${esc(w.caption)}" loading="lazy"></div><h3>${esc(w.caption)} ↗</h3><p>${esc(w.provider.category)} · ${esc(w.provider.name)}</p></button>`).join('');document.querySelectorAll('[data-work]').forEach(b=>b.onclick=()=>details(b.dataset.work));}
