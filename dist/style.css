@@ -39,3 +39,12 @@
 /* Give the portrait a brighter, quieter presentation. */
 .hero-art>img{object-position:center 34%}.hero-art .image-shade{background:linear-gradient(180deg,#202c481c 0%,transparent 18%,transparent 58%,#101b30d9 100%)}.hero-art .art-bottom h2{margin-top:0}.hero-art .art-top{color:var(--ink);font-weight:700}.hero-art .art-bottom p{color:#ffffffe6}
 @media(max-width:680px){.hero-art>img{object-position:center 34%}}
+
+/* Preserve the supplied monochrome photo; place copy below the portrait. */
+.hero-art{display:flex;flex-direction:column;background:var(--ink)}
+.hero-art>img{position:static;width:100%;height:420px;object-fit:cover;object-position:center 25%;flex:none}
+.hero-art .image-shade,.hero-art .art-top{display:none}
+.hero-art .art-bottom{position:static;padding:24px 28px;background:var(--ink)}
+.hero-art .art-bottom h2{font-size:30px;margin:0 0 8px}
+.hero-art .art-bottom p{margin:0;max-width:none}
+@media(max-width:680px){.hero-art{height:auto}.hero-art>img{height:360px;object-position:center 25%}.hero-art .art-bottom{padding:22px}.hero-art .art-bottom h2{font-size:27px}}

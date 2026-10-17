@@ -87,3 +87,5 @@ Hero portrait: “Elegant Woman in Traditional African Attire Portrait” by pex
 Current hero: user-provided co-founder portrait with approved background replacement. Original approval is recorded in the project conversation; no stock model is presented as the co-founder.
 
 New-account alerts are prepared through the Better Auth user-creation hook. Once `RESEND_API_KEY`, `EMAIL_FROM`, and `ADMIN_EMAILS` are configured, each new account triggers a generic administrator email directing them to the dashboard. It does not include the new user’s personal details. Delivery failures are logged without blocking signup; alerts are best-effort, without retries. No emails are sent until sender configuration exists.
+
+Current live hero supersedes earlier portraits: user-provided black-and-white photograph (`fyield-portrait-mono.jpg`), copied unchanged. Framing is CSS-only, with the caption below the image.
