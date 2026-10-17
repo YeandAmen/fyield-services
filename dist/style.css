@@ -17,3 +17,16 @@
 [hidden]{display:none!important}#empty{padding:40px 28px;border:1px solid #e5e0d8;border-radius:16px;background:#f7f4ee;text-align:center}#empty strong{display:block;font-size:24px;letter-spacing:-.5px}#empty span{display:block;max-width:520px;margin:14px auto 22px;line-height:1.7}
 
 .admin-counts{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}.admin-counts div{background:#f7f4ee;padding:16px;border-radius:12px}.admin-counts strong,.admin-counts span{display:block}.admin-counts strong{font-size:28px}.admin-table{overflow-x:auto;margin:14px 0 28px}.admin-table table{border-collapse:collapse;width:100%;text-align:left}.admin-table th,.admin-table td{padding:12px;border-bottom:1px solid #e5e0d8}.admin-table td{overflow-wrap:anywhere}@media(max-width:680px){.admin-counts{grid-template-columns:repeat(2,1fr)}}
+
+/* Keep decorative icons consistent instead of platform emoji. */
+.ui-icon{display:block;width:20px;height:20px;flex:none}.button-icon{display:inline-flex;align-items:center;justify-content:center;flex:none}.art-top .ui-icon{width:24px;height:24px}.tiny-star .ui-icon{width:22px;height:22px}button,a,.cat-icon,.hero-note{font-variant-emoji:text}
+@media(max-width:680px){
+ .hero-btn{width:100%;min-height:48px;padding:14px 18px;gap:16px;justify-content:space-between;font-size:14px;line-height:1.4}
+ .hero-note{line-height:1.5;align-items:center}.tiny-star{flex:none}
+ .searchbar{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding:12px}
+ .searchbar label,.searchbar label.location{width:100%;min-height:44px;padding:0 8px}
+ .searchbar label.location{border-top:1px solid var(--line);padding-top:8px}
+ .searchbar select{width:100%;min-height:44px}.searchbar .btn{width:100%;min-height:48px;font-size:14px;justify-content:space-between;padding:14px 18px}
+ .searchbar input,.searchbar select{font-size:16px}.plain{min-height:44px}.chip{min-height:40px}
+ .profile-price{flex-wrap:wrap;gap:16px}.profile-price .btn{min-height:44px}
+}
