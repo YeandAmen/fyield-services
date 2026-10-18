@@ -89,3 +89,6 @@ Current hero: user-provided co-founder portrait with approved background replace
 New-account alerts are prepared through the Better Auth user-creation hook. Once `RESEND_API_KEY`, `EMAIL_FROM`, and `ADMIN_EMAILS` are configured, each new account triggers a generic administrator email directing them to the dashboard. It does not include the new user’s personal details. Delivery failures are logged without blocking signup; alerts are best-effort, without retries. No emails are sent until sender configuration exists.
 
 Current live hero supersedes earlier portraits: user-provided black-and-white photograph (`fyield-portrait-mono.jpg`), copied unchanged. Framing is CSS-only, with the caption below the image.
+
+
+Administrator entry: `https://fyield-services.vercel.app/#admin`. Signed-out visitors are prompted to sign in; server authorization still requires an allowlisted, verified email. Successful password and email-OTP sign-ins trigger generic admin alerts when the Resend sender is configured. Failed logins and session refreshes do not trigger sign-in alerts. Alerts omit user details and link to the restricted dashboard; delivery remains best-effort.
