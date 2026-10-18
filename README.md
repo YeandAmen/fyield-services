@@ -92,3 +92,7 @@ Current live hero supersedes earlier portraits: user-provided black-and-white ph
 
 
 Administrator entry: `https://fyield-services.vercel.app/#admin`. Signed-out visitors are prompted to sign in; server authorization still requires an allowlisted, verified email. Successful password and email-OTP sign-ins trigger generic admin alerts when the Resend sender is configured. Failed logins and session refreshes do not trigger sign-in alerts. Alerts omit user details and link to the restricted dashboard; delivery remains best-effort.
+
+
+### Temporary Gmail delivery (no sending domain required)
+Set `EMAIL_PROVIDER=gmail` and `GMAIL_USER=ofodilechukwudera@gmail.com` in Vercel Production. Enable Google 2-Step Verification and generate a dedicated app password named Fyield. Enter it directly in Vercel as the **Secret** `GMAIL_APP_PASSWORD`; never commit it, paste it in chat, or use the normal Gmail password. The SMTP sender is fixed to the authenticated Gmail account and uses TLS on port 465. After delivery is confirmed, set `EMAIL_OTP_ENABLED=true` and redeploy. Existing accounts can then verify ownership by email code; allowlisted verified accounts can open `/#admin`. Admin alerts use `ADMIN_EMAILS`. Gmail limits and automated abuse checks apply; use a dedicated transactional sender as traffic grows. Changes to environment variables require a new deployment. Gmail failures do not fall back to another provider silently.
