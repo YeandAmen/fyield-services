@@ -17,7 +17,14 @@ app.use('/api',async(req,res,next)=>{
    if(req.headers.origin!==origin)throw new InputError('This request must come from Fyield.',403);
    if(!req.is('application/json'))throw new InputError('JSON request required.',415);
   }
-  req.session=await getAuth().api.getSession({headers:fromNodeHeaders(req.headers)});next();
+  req.session=await getAuth().api.getSession({headers:fromNodeHeaders(req.headers),query:{disableRefresh:true}});
+  if(req.session&&isAdmin(req.session.user)){
+   // The expiry check prevents an expired session being revived by activity.
+   const active=await pool.query(`UPDATE "session" SET "expiresAt"=now()+interval '15 minutes' WHERE id=$1 AND "expiresAt">now() RETURNING "expiresAt"`,[req.session.session.id]);
+   if(!active.rowCount)req.session=null;
+   else req.session.session.expiresAt=active.rows[0].expiresAt;
+  }
+  next();
  }catch(e){next(e)}
 });
 function signed(req){if(!req.session)throw new InputError('Please sign in to continue.',401);return req.session.user.id;}
